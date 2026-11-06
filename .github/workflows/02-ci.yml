@@ -1,0 +1,44 @@
+name: CI
+on: [push]
+jobs:
+  lint:
+    name: Lint – Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+      - name: Installer Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Vérifier le style
+        run: ruff check .
+
+  build:
+    name: Build – Vérifier l'application
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Compiler le code
+        run: python -m compileall app
+      - name: Importer l'application
+        run: python -c "from app.main import app; print(app.title)"
+
+  test:
+    name: Test – Pytest
+    needs: [ lint, build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Lancer les tests
+        run: pytest

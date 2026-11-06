@@ -1,0 +1,25 @@
+name: Contextes
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+env:
+  APP_NAME: fastapi-starter
+jobs:
+  infos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Afficher les contextes
+        run: |
+          echo "App      : ${{ env.APP_NAME }}"
+          echo "Acteur   : ${{ github.actor }}"
+          echo "Événement: ${{ github.event_name }}"
+          echo "Branche  : ${{ github.ref_name }}"
+          echo "SHA      : ${{ github.sha }}"
+          echo "OS       : ${{ runner.os }}"
+          echo "head_ref : ${{ github.head_ref }}"
+          echo "base_ref : ${{ github.base_ref }}"
+      - name: Dump github (Q10)
+        env:
+          GH_CTX: ${{ toJson(github) }}
+        run: echo "$GH_CTX"
